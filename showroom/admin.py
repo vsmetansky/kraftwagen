@@ -1,3 +1,7 @@
 from django.contrib import admin
 
-# Register your models here.
+from showroom.models import Employee, Position, Fullname
+
+admin.site.register(Position)
+admin.site.register(Employee)
+admin.site.register(Fullname)
