@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from showroom.models import Employee, Position, Fullname, Facility, BodyType, Car, Client, Manufacturer
+from showroom.models import Employee, Position, Fullname, Facility, BodyType, Car, Order, Manufacturer
 
 admin.site.register(Position)
 admin.site.register(Employee)
@@ -11,4 +11,4 @@ admin.site.register(Facility)
 admin.site.register(BodyType)
 admin.site.register(Car)
 
-admin.site.register(Client)
+admin.site.register(Order)

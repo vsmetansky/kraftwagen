@@ -1,8 +1,9 @@
+from datetime import date
+
+from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 
-CHAR_FIELD_DEFAULT_SIZE_S = 20
-CHAR_FIELD_DEFAULT_SIZE_M = 100
-CHAR_FIELD_DEFAULT_SIZE_L = 1000
+from showroom.utils import CHAR_FIELD_DEFAULT_SIZE_M, CHAR_FIELD_DEFAULT_SIZE_L, CHAR_FIELD_DEFAULT_SIZE_S
 
 
 class Fullname(models.Model):
@@ -16,7 +17,9 @@ class Fullname(models.Model):
 
 class Position(models.Model):
     name = models.CharField(max_length=CHAR_FIELD_DEFAULT_SIZE_M, unique=True)
-    salary = models.DecimalField(max_digits=6, decimal_places=2)
+    salary = models.DecimalField(max_digits=10, decimal_places=2, validators=[
+        MinValueValidator(1)
+    ])
     responsibilities = models.CharField(max_length=CHAR_FIELD_DEFAULT_SIZE_M)
     requirements = models.CharField(max_length=CHAR_FIELD_DEFAULT_SIZE_M)
 
@@ -27,16 +30,21 @@ class Position(models.Model):
 class Employee(models.Model):
     SEXES = (
         ('M', 'Male'),
-        ('F', 'Female'),
+        ('F', 'Female')
     )
 
     position = models.ForeignKey(Position, on_delete=models.CASCADE)
     fullname = models.ForeignKey(Fullname, on_delete=models.CASCADE)
 
-    age = models.IntegerField()
+    age = models.IntegerField(default=18, validators=[
+        MinValueValidator(18)
+    ])
     sex = models.CharField(max_length=1, choices=SEXES)
     address = models.CharField(max_length=CHAR_FIELD_DEFAULT_SIZE_M)
-    passport = models.IntegerField(unique=True)
+    passport = models.IntegerField(unique=True, validators=[
+        MaxValueValidator(1000000000000),
+        MinValueValidator(0)
+    ])
 
     def __str__(self):
         return f'{self.fullname}, {self.position}'
@@ -121,7 +129,9 @@ class Manufacturer(models.Model):
 class Facility(models.Model):
     name = models.CharField(max_length=CHAR_FIELD_DEFAULT_SIZE_M, unique=True)
     specifications = models.CharField(max_length=CHAR_FIELD_DEFAULT_SIZE_L)
-    price = models.DecimalField(max_digits=10, decimal_places=2)
+    price = models.DecimalField(max_digits=10, decimal_places=2, validators=[
+        MinValueValidator(1)
+    ])
 
     def __str__(self):
         return self.name
@@ -147,30 +157,48 @@ class Car(models.Model):
         Facility, related_name='car_facility_3', on_delete=models.SET_NULL, blank=True, null=True)
 
     brand = models.CharField(max_length=CHAR_FIELD_DEFAULT_SIZE_M)
-    date_produced = models.DateField()
+    date_produced = models.DateField(default=date.today)
     color = models.CharField(max_length=CHAR_FIELD_DEFAULT_SIZE_S)
-    body_number = models.IntegerField(unique=True)
-    engine_number = models.IntegerField(unique=True)
+    body_number = models.IntegerField(unique=True, validators=[
+        MinValueValidator(0)
+    ])
+    engine_number = models.IntegerField(unique=True, validators=[
+        MinValueValidator(0)
+    ])
     specifications = models.CharField(max_length=CHAR_FIELD_DEFAULT_SIZE_L)
-    price = models.DecimalField(max_digits=10, decimal_places=2)
+    price = models.DecimalField(max_digits=10, decimal_places=2, validators=[
+        MinValueValidator(1)
+    ])
 
     def __str__(self):
         return f'{self.manufacturer}, {self.brand}, {self.color}'
 
 
-class Client(models.Model):
+class Order(models.Model):
     fullname = models.ForeignKey(Fullname, on_delete=models.CASCADE)
     car = models.ForeignKey(Car, on_delete=models.CASCADE)
     employee = models.ForeignKey(Employee, on_delete=models.SET_NULL, blank=True, null=True)
 
-    address = models.CharField(max_length=CHAR_FIELD_DEFAULT_SIZE_M)
-    phone = models.IntegerField()
-    passport = models.IntegerField()
-    date_ordered = models.DateField()
-    date_sold = models.DateField()
+    address = models.CharField(max_length=CHAR_FIELD_DEFAULT_SIZE_M, blank=True, null=True)
+    phone = models.IntegerField(models.IntegerField(validators=[
+        MaxValueValidator(1000000000000),
+        MinValueValidator(0)
+    ]))
+    passport = models.IntegerField(validators=[
+        MaxValueValidator(1000000000000),
+        MinValueValidator(0)
+    ])
+    date_ordered = models.DateField(default=date.today)
+    date_sold = models.DateField(default=date.today)
     is_processed = models.BooleanField(default=False)
     is_paid = models.BooleanField(default=False)
-    prepay_percent = models.IntegerField()
+    prepay_percent = models.IntegerField(
+        default=0,
+        validators=[
+            MaxValueValidator(100),
+            MinValueValidator(0)
+        ]
+    )
 
     def __str__(self):
         return f'{self.fullname}: {self.car}'
