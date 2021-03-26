@@ -7,8 +7,11 @@ CHAR_FIELD_DEFAULT_SIZE_L = 1000
 
 class Fullname(models.Model):
     first_name = models.CharField(max_length=CHAR_FIELD_DEFAULT_SIZE_M)
-    second_name = models.CharField(max_length=CHAR_FIELD_DEFAULT_SIZE_M)
+    second_name = models.CharField(max_length=CHAR_FIELD_DEFAULT_SIZE_M, blank=True, null=True)
     surname = models.CharField(max_length=CHAR_FIELD_DEFAULT_SIZE_M)
+
+    def __str__(self):
+        return ' '.join((self.first_name, self.surname))
 
 
 class Position(models.Model):
@@ -16,6 +19,9 @@ class Position(models.Model):
     salary = models.DecimalField(max_digits=6, decimal_places=2)
     responsibilities = models.CharField(max_length=CHAR_FIELD_DEFAULT_SIZE_M)
     requirements = models.CharField(max_length=CHAR_FIELD_DEFAULT_SIZE_M)
+
+    def __str__(self):
+        return self.name
 
 
 class Employee(models.Model):
@@ -31,6 +37,9 @@ class Employee(models.Model):
     sex = models.CharField(max_length=1, choices=SEXES)
     address = models.CharField(max_length=CHAR_FIELD_DEFAULT_SIZE_M)
     passport = models.IntegerField(unique=True)
+
+    def __str__(self):
+        return f'{self.fullname}, {self.position}'
 
 
 class Manufacturer(models.Model):
@@ -105,16 +114,25 @@ class Manufacturer(models.Model):
     address = models.CharField(max_length=CHAR_FIELD_DEFAULT_SIZE_M)
     country = models.CharField(max_length=2, choices=COUNTRIES)
 
+    def __str__(self):
+        return self.name
+
 
 class Facility(models.Model):
     name = models.CharField(max_length=CHAR_FIELD_DEFAULT_SIZE_M, unique=True)
     specifications = models.CharField(max_length=CHAR_FIELD_DEFAULT_SIZE_L)
-    price = models.DecimalField(max_digits=6, decimal_places=2)
+    price = models.DecimalField(max_digits=10, decimal_places=2)
+
+    def __str__(self):
+        return self.name
 
 
 class BodyType(models.Model):
     name = models.CharField(max_length=CHAR_FIELD_DEFAULT_SIZE_M, unique=True)
     description = models.CharField(max_length=CHAR_FIELD_DEFAULT_SIZE_L)
+
+    def __str__(self):
+        return self.name
 
 
 class Car(models.Model):
@@ -134,7 +152,10 @@ class Car(models.Model):
     body_number = models.IntegerField(unique=True)
     engine_number = models.IntegerField(unique=True)
     specifications = models.CharField(max_length=CHAR_FIELD_DEFAULT_SIZE_L)
-    price = models.DecimalField(max_digits=6, decimal_places=2)
+    price = models.DecimalField(max_digits=10, decimal_places=2)
+
+    def __str__(self):
+        return f'{self.manufacturer}, {self.brand}, {self.color}'
 
 
 class Client(models.Model):
@@ -148,5 +169,8 @@ class Client(models.Model):
     date_ordered = models.DateField()
     date_sold = models.DateField()
     is_processed = models.BooleanField(default=False)
-    is_payed = models.BooleanField(default=False)
+    is_paid = models.BooleanField(default=False)
     prepay_percent = models.IntegerField()
+
+    def __str__(self):
+        return f'{self.fullname}: {self.car}'
