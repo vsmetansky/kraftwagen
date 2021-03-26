@@ -12,7 +12,7 @@ class Fullname(models.Model):
 
 
 class Position(models.Model):
-    name = models.CharField(max_length=CHAR_FIELD_DEFAULT_SIZE_M)
+    name = models.CharField(max_length=CHAR_FIELD_DEFAULT_SIZE_M, unique=True)
     salary = models.DecimalField(max_digits=6, decimal_places=2)
     responsibilities = models.CharField(max_length=CHAR_FIELD_DEFAULT_SIZE_M)
     requirements = models.CharField(max_length=CHAR_FIELD_DEFAULT_SIZE_M)
@@ -101,19 +101,19 @@ class Manufacturer(models.Model):
 
     employee = models.ForeignKey(Employee, on_delete=models.SET_NULL, blank=True, null=True)
 
-    name = models.CharField(max_length=CHAR_FIELD_DEFAULT_SIZE_M)
+    name = models.CharField(max_length=CHAR_FIELD_DEFAULT_SIZE_M, unique=True)
     address = models.CharField(max_length=CHAR_FIELD_DEFAULT_SIZE_M)
     country = models.CharField(max_length=2, choices=COUNTRIES)
 
 
 class Facility(models.Model):
-    name = models.CharField(max_length=CHAR_FIELD_DEFAULT_SIZE_M)
+    name = models.CharField(max_length=CHAR_FIELD_DEFAULT_SIZE_M, unique=True)
     specifications = models.CharField(max_length=CHAR_FIELD_DEFAULT_SIZE_L)
     price = models.DecimalField(max_digits=6, decimal_places=2)
 
 
 class BodyType(models.Model):
-    name = models.CharField(max_length=CHAR_FIELD_DEFAULT_SIZE_M)
+    name = models.CharField(max_length=CHAR_FIELD_DEFAULT_SIZE_M, unique=True)
     description = models.CharField(max_length=CHAR_FIELD_DEFAULT_SIZE_L)
 
 
@@ -131,8 +131,8 @@ class Car(models.Model):
     brand = models.CharField(max_length=CHAR_FIELD_DEFAULT_SIZE_M)
     date_produced = models.DateField()
     color = models.CharField(max_length=CHAR_FIELD_DEFAULT_SIZE_S)
-    body_number = models.IntegerField()
-    engine_number = models.IntegerField()
+    body_number = models.IntegerField(unique=True)
+    engine_number = models.IntegerField(unique=True)
     specifications = models.CharField(max_length=CHAR_FIELD_DEFAULT_SIZE_L)
     price = models.DecimalField(max_digits=6, decimal_places=2)
 
